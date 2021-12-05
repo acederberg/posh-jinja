@@ -40,7 +40,7 @@ def load_palette( palette_name ) -> dict:
     with open( join( PALETTES, palette_name ) ) as file : return get_load( palette_name )( file )
 
 
-def render_pallete_validation_message( bad_items : dict ): 
+def render_pallete_validation_message( bad_items : dict ) -> str: 
     return "Bad values: " + ", ".join( f"{key} = {value}" for key, value in bad_items.items() )
 
 
@@ -58,7 +58,7 @@ def validate_palette( palette : dict ) -> bool:
     except Exception as err: raise InadmissibleValue( err )
 
 
-def get_palette( palette : dict ) :
+def get_palette( palette : dict ) -> dict:
     "Load and validate a palette"
     
     palette = load_palette( palette ) 
@@ -70,14 +70,17 @@ def get_palette( palette : dict ) :
 Env = Environment(
     loader =  FileSystemLoader( TEMPLATES )
 )
-def render_template( template_name : str, palette_name : str ):
+
+
+def render_template( template_name : str, palette_name : str ) -> str:
 
     palette = get_palette( palette_name )
     template = Env.get_template( template_name )
     rendered = template.render( **palette )
     return rendered
 
-def build_template( template_name : str, palette_name : str ):
+
+def build_template( template_name : str, palette_name : str ) -> None:
     
     extension = '.json' if is_json( template_name ) else (
         '.yaml' 
@@ -88,16 +91,12 @@ def build_template( template_name : str, palette_name : str ):
 
     template_destination = join( 
         BUILD,
-        template_name.replace( f'.{ JINJA }', '' )
+        re.sub( JINJA, '', template_name )
     )
 
     template_rendered = render_template( template_name, palette_name )
     with open( template_destination, 'w' ) as file: file.writelines( template_rendered )
 
-# def example():
-#     my_template = 'my_theme.omp.yaml.j2'
-#     my_palette = 'my_palette.json'
-#     print( render_template( my_template, my_palette ) )
 
 def main():
     from sys import argv
