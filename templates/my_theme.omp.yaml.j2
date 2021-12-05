@@ -1,0 +1,44 @@
+schema : "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+blocks :
+  # type, newline, alignment ( left or right ), vertical offset, horizontal offset, setments
+  type : prompt
+  alignment : left
+  newline : true
+  segments :
+    # keywords :
+    # - type : string in segments
+    # - style : enum( powerline, plain, diamond )
+    # - powerline_symbol : string
+    # - invert_powerline : boolean
+    # - leading_diamond : string
+    # - trailing diamond : string
+    # - foreground : [ string s.t. /^#([A-F0-7a-f]{6}||[A-F0-7a-f]{3})$/
+    # - foreground_templates : [ string ]
+    #
+    # For more on unicode, see [ this ]( https://ohmyposh.dev/docs/git#properties )
+    - type : root
+      style : powerline
+      powerline_symbol : '\uE0B0'
+      foreground : '{{ foreground }}'
+      background : '{{ background }}'
+      properties : { root_icon : '\uF0E7' }
+
+    - type : shell
+      style : powerline
+      powerline_symbol : '\uE0B0'
+      foreground : '{{ foreground }}'
+      background : '{{ brightRed }}'
+
+    - type : git
+      style : powerline
+      powerline_symbol : '\uE0B0'
+      foreground : '{{ foreground }}'
+      background : '{{ brightOranage }}'
+      properties :
+        branch_icon : ""
+        fetch_stash_count : true
+        fetch_upstream_icon : true
+        fetch_status : false
+        prefix : ' \u279c ('
+        postfix : ') '
+
