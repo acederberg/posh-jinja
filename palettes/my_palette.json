@@ -1,0 +1,23 @@
+{
+	"background": "#3C0315",
+	"black": "#282A2E",
+	"blue": "#2257FF",
+	"brightBlack": "#676E7A",
+	"brightBlue": "#2257FF",
+	"brightCyan": "#11FFFF",
+	"brightGreen": "#22FF22",
+	"brightPurple": "#AC79BB",
+	"brightRed": "#FF3333",
+	"brightWhite": "#FFFFFD",
+	"brightYellow": "#FFFF57",
+	"cursorColor": "#FFFFFF",
+	"cyan": "#57FFFF",
+	"foreground": "#FFF2E8",
+	"green": "#57FF00",
+	"name": "RaspberryNeon",
+	"purple": "#7D498F",
+	"red": "#FF5757",
+	"selectionBackground": "#FFFFFF",
+	"white": "#FFFFFD",
+	"yellow": "#FF3700"
+}
