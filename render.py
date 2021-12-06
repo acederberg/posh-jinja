@@ -65,10 +65,10 @@ get_extension = json_else_yaml(
 get_load = json_else_yaml(
     lambda path : json.load,
     lambda path : (
-        lambda filestream : yaml.load( 
+        lambda filestream : fix_escape( yaml.load( 
             filestream, 
             Loader = yaml.FullLoader 
-        )
+        ) )
     )
 )
 
@@ -83,6 +83,36 @@ get_dump = json_else_yaml(
     lambda path : yaml.dump
 )
 
+
+# Method to fix messed up escape characters
+fix_value = lambda value : value.encode().decode( 'unicode_escape' )
+fixable = lambda value : ( type( value ) == list ) or ( type( value ) == dict )
+
+def fix_escape( data ): return {
+    key : fix_value( value )
+    if type( value ) == str
+    else (
+        fix_escape( value )
+        if fixable( value )
+        else value
+    )
+    for key, value in data.items()
+} if type( data ) == dict else (
+    [
+        fix_value( value )
+        if type( value ) == str
+        else (
+            fix_escape( value )
+            if fixable( value )
+            else value
+        )
+        for value in data
+    ] 
+    if type( data ) == list
+    else
+        data
+)
+    
 
 # PALETTE METHODS.
 

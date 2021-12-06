@@ -27,25 +27,28 @@ compliment_rendered_path = json_else_yaml(
 )
 
 
-def switch( template_name ):
+def switch( path ):
     " Take template or rendered template and switch it to the complementing format. "
-    compliment = get_compliment( template_name ) 
+    compliment = get_compliment( path ) 
     if compliment is None: raise Exception( "Invalid file type" )
-    load = get_load( template_name )
+    load = get_load( path )
     dump = get_dump( '.' + compliment )
 
     with open( 
-        template_path( template_name ),
+        path,
         "r"
     ) as readfile, open( 
-        compliment_rendered_path( template_name ),
+        compliment_rendered_path( path ),
         "w"
     ) as writefile:
         template : dict = load( readfile )
-        print( template, writefile )
+        print( template )
         dump( template, writefile, )
 
     print( f"{load = }, { dump = }" )
 
-switch( "my_theme.omp.yaml.j2" )
+
+if __name__ == "__main__" :
+    from sys import argv
+    switch( argv[ 1 ] )
 
