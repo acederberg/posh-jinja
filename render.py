@@ -85,7 +85,7 @@ get_dump = json_else_yaml(
 
 
 # Method to fix messed up escape characters
-fix_value = lambda value : value.encode().decode( 'unicode_escape' )
+fix_value = lambda value : value.encode().decode( 'unicode_escape' ) if '\\' in value else value
 fixable = lambda value : ( type( value ) == list ) or ( type( value ) == dict )
 
 def fix_escape( data ): return {
