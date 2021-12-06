@@ -73,7 +73,13 @@ get_load = json_else_yaml(
 )
 
 get_dump = json_else_yaml(
-    lambda path : json.dump,
+    lambda path : (
+        lambda data, filestream : json.dump( 
+            data, 
+            filestream, 
+            indent = 4 
+        )
+    ),
     lambda path : yaml.dump
 )
 
