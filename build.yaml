@@ -1,0 +1,11 @@
+render :
+
+  - name : my_theme
+    target : json
+    template : my_template.omp.yaml
+    palette : my_palette.yaml
+
+  - name : my_theme_alt
+    target : yaml
+    template : my_template.omp.yaml
+    palette : my_palette_alt.yaml
