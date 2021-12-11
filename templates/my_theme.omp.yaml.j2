@@ -47,4 +47,19 @@ blocks :
         fetch_upstream_icon : true
         template: {% raw %}"{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"{% endraw %}
       
+    - type : exit
+      style : diamond
+      leading_diamond : ""
+      trailing_diamond : "\ue0b4 "
+      
+      foreground : "{{ brightWhite }}"
+      foreground_templates :
+        - "{% raw %}{{ if gt .Code 0 }}{% endraw %}{{ brightBlack }}{% raw %}{{end}}{% endraw %}"
 
+      background : "{{ brightBlack }}"
+      background_templates :
+      - "{% raw %}{{ if gt .Code 0 }}{% endraw %}{{ brightWhite }}{% raw %}{{end}}{% endraw %}"
+
+      properties :
+        always_enabled : true
+        template : "\uE23A"
