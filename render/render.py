@@ -1,26 +1,101 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from os.path import join, abspath
+from os.path import join, abspath, basename
 import json
 import yaml
 import re
 
-json_, yaml_ = "json", "yaml"
+json_, yaml_, jinja_ = "json", "yaml", "jinja_"
 EXTENSIONS = { json_ : json, yaml_ : yaml }
-TEMPLATES = './templates'
-PALETTES = './palettes'
-BUILD = './build'
+TEMPLATES = abspath( './templates' )
+PALETTES = abspath( './palettes' )
+BUILD = abspath( './build' )
 YAML = re.compile( '.(?i)yaml' )
 JINJA = re.compile( '.(?i)j2' )
 JSON = re.compile( '.(?i)json' )
 HEX = re.compile( '^#([A-Fa-f0-7]{3}|[A-Fa-f0-7]{6})$' )
+FORMATS = {
+    yaml_ : YAML,
+    json_ : JSON,
+    jinja_ : JINJA 
+}
+STRINGS = {
+    value : '.' + key
+    for key,value in FORMATS.items()
+}
+INVERSE = {
+    YAML : JSON,
+    JSON : YAML
+}
+
 
 # Path tools
 
-def rendered_path( template_name ):
-    return abspath( join( 
+def rendered_path_from_template_name( template_name : str, target_format ) -> str :
+        
+    # Remove the jinja extension.
+    no_jinja = re.sub( JINJA, '', template_name )
+    print( f"{ no_jinja = }" )
+    # If the name is not in the target format, substitute the current format with the opposite.
+    if target_format and not target_format.search( template_name ): no_jinja = re.sub( 
+        INVERSE[ target_format ], 
+        STRINGS[ target_format ], 
+        no_jinja 
+    )
+    print( f"{ no_jinja = }" )
+
+    return join( 
         BUILD,
-        re.sub( JINJA, '', template_name )
-    ) )
+        no_jinja 
+    )
+
+
+def rendered_path_from_target_name( target_name : str, target_format ) -> str :
+
+    # When both a name and format are provided and the format is not specified in the name, add the format.
+    if not no_target_format and not target_name.search( target_format ): 
+        target_name += '.omp' + '.'.join( 
+            key 
+            for key, value in FORMATS.items()
+            if value == target_format
+        )
+    return join(
+        BUILD,
+        target_name
+    )
+
+
+def rendered_path( target_name : str = None, template_name : str = None, target_format = None) -> str :
+    """
+    Take a template name and a target format ( regex ) and make the absolute path to the result.
+    If the 'name' field is provided, makes a name with the target format if no format is matched within name.
+    """
+    print( f"{ target_name = }, { template_name = }, { target_format = }" )
+    everything = (
+        item is None
+        for item in (
+            template_name, 
+            target_format, 
+            target_name
+        )
+    )  
+    no_template_name, no_target_name, no_target_format = everything
+    all_but_name = no_template_name and ( not no_target_name ) and ( not no_target_format )
+
+    if all_but_name or all( not item for item in everything ): return rendered_path_from_template_name( template_name, target_format )
+    elif not no_name : return rendered_path_from_target_name( target_name, target_formate )
+    else : raise Exception( "Insufficient arguements to `rendered_path`" )
+        
+        
+_compliment_rendered_path = lambda EXTN, extn_, path : abspath(
+    join(
+        BUILD,
+        re.sub(
+            EXTN,
+            '.' + extn_,
+            basename( path )
+        )
+    )
+)
 
 
 def template_path( template_name ):
@@ -62,6 +137,12 @@ get_extension = json_else_yaml(
 )
 
 
+get_compliment = json_else_yaml(
+    lambda path : '.' + yaml_,
+    lambda path : '.' + json_
+)
+
+
 get_load = json_else_yaml(
     lambda path : json.load,
     lambda path : (
@@ -81,6 +162,12 @@ get_dump = json_else_yaml(
         )
     ),
     lambda path : yaml.dump
+)
+
+
+compliment_rendered_path = json_else_yaml(
+    lambda path : _compliment_rendered_path( JSON, yaml_, path ),
+    lambda path : _compliment_rendered_path( YAML, json_, path )
 )
 
 
@@ -171,31 +258,55 @@ def render_template( template_name : str, palette_name : str ) -> str:
     return rendered
 
 
-def build_template( template_name : str, palette_name : str ) -> None:
+def switch( path ):
+    " Take template or rendered template and switch it to the complementing format. "
+    compliment = get_compliment( path )
+    if compliment is None: raise Exception( "Invalid file type" )
+    load = get_load( path )
+    dump = get_dump( '.' + compliment )
+
+    with open(
+        path,
+        "r"
+    ) as readfile, open(
+        compliment_rendered_path( path ),
+        "w"
+    ) as writefile:
+        template : dict = load( readfile )
+        print( template )
+        dump( template, writefile, )
+
+
+def build_template( template_name : str, palette_name : str, target_format : str = None ) -> None:
     
-    extension = '.json' if is_json( template_name ) else (
-        '.yaml' 
-        if is_yaml( template_name ) 
-        else None
-    )
+    extension = get_extension( template_name )
+    extension_is_target_format = extension == target_format
+    target_format = FORMATS[ target_format ] if target_format else None
+
     if extension is None : raise Exception( "Template must have a json or yaml extension" )
 
-    template_destination = rendered_path( template_name )
+    destination = rendered_path( 
+        template_name = template_name, 
+        target_format = target_format if extension_is_target_format else None
+    )
 
+    print( f"{ destination = }" )
     template_rendered = render_template( template_name, palette_name )
+
     if not template_rendered: raise Exception( "Template not rendered" )
-    with open( template_destination, 'w' ) as file: file.writelines( template_rendered )
+    with open( destination, 'w' ) as file: file.writelines( template_rendered )
+
+    if not extension_is_target_format : switch( destination )
 
 
 # COMMANDLINE
 def main():
     from sys import argv
 
-    if not len( argv ) == 3: raise Exception( "Requires exactly two arguements." )
+    n = len( argv )
+    if not ( 4 >= n >= 3 ): raise Exception( "Requires between 2 and 4 arguements." )
 
-    _, template_name, palette_name = argv
-
-    build_template( template_name, palette_name )
+    build_template(  *argv[1:4] )
 
 
 if __name__ == "__main__" :
