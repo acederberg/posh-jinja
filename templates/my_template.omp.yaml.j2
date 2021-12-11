@@ -29,11 +29,21 @@ blocks :
       foreground : '{{ foreground }}'
       background : '{{ brightRed }}'
 
+    - type : path
+      style : powerline
+      powerline_symbol : "\uE0B0"
+
+      background : '{{ purple }}'
+      foreground : '{{ foreground }}'
+
+      properties :
+        style : full
+
     - type : git
       style : powerline
       powerline_symbol : '\uE0B0'
-      foreground : '{{ foreground }}'
-      background : '{{ cyan }}'
+      foreground : '{{ background }}'
+      background : '{{ green }}'
       
       background_templates : 
       - "{% raw %}{{ if or (.Working.Changed) (.Staging.Changed) }}{% endraw %}{{ brightRed }}{% raw %}{{ end }}{% endraw %}"

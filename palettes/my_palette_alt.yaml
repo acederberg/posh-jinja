@@ -1,8 +1,8 @@
 background:   "#3C0315"
-foreground:   "#dddddd"
+foreground:   "#eeeeee"
 
-black:        "#111111"
-brightBlack:  "#333333"
+black:        "#000000"
+brightBlack:  "#111111"
 
 blue:         "#44acff"
 brightBlue:   "#0057ff"
