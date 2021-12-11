@@ -1,0 +1,30 @@
+background:   "#3C0315"
+foreground:   "#dddddd"
+
+black:        "#111111"
+brightBlack:  "#333333"
+
+blue:         "#44acff"
+brightBlue:   "#0057ff"
+
+cyan:         "#acffff"
+brightCyan:   "#57ffff"
+
+green:        "#44ffac"
+brightGreen:  "#00ff57"
+
+purple:       "#ac57cc"
+brightPurple: "#dd7add"
+
+red:          "#ffbbbb"
+brightRed:    "#ff0057"
+
+white:        "#dddddd"
+brightWhite:  "#ffffff"
+
+brightYellow: "#ffff57"
+yellow:       "#ffba33"
+
+cursorColor:  "#FFFFFF"
+selectionBackground: "#FFFFFF"
+
