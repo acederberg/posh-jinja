@@ -1,10 +1,20 @@
+
 schema : "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
 blocks :
-  # type, newline, alignment ( left or right ), vertical offset, horizontal offset, setments
+
+# keywords :
+# type
+# - newline
+# - alignment ( left or right )
+# - vertical offset
+# - horizontal offset
+# - segments
+
 - type : prompt
   alignment : left
   newline : true
   segments :
+
     # keywords :
     # - type : string in segments
     # - style : enum( powerline, plain, diamond )
@@ -16,40 +26,48 @@ blocks :
     # - foreground_templates : [ string ]
     #
     # For more on unicode, see [ this ]( https://ohmyposh.dev/docs/git#properties )
-    - type : root
-      style : powerline
-      powerline_symbol : '\uE0B0'
-      foreground : '{{ foreground }}'
-      background : '{{ background }}'
-      properties : { root_icon : '\uF0E7' }
+
+
+    - type : session
+      style : diamond 
+      leading_diamond : "\ue0c2"
+      trailing_diamond : "\ue0b0"
+
+      foreground : '{{ background }}'
+      background : '{{ foreground }}'
+
+      properties :
+      template : '{% raw %}{{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .ComputerName }}{% endraw %}'
+
 
     - type : shell
       style : powerline
-      powerline_symbol : '\uE0B0'
-      foreground : '{{ foreground }}'
-      background : '{{ brightRed }}'
+      powerline_symbol : '\uE0B0 \ue000'
+      foreground : '{{ brightWhite }}'
+      background : '{{ blue }}'
 
     - type : path
       style : powerline
-      powerline_symbol : "\uE0B0"
+      powerline_symbol : "\uE0Bc"
 
-      background : '{{ purple }}'
-      foreground : '{{ foreground }}'
+      background : '{{ brightPurple }}'
+      foreground : '{{ brightBlack }}'
 
       properties :
         style : full
+
 
     - type : git
       style : powerline
       powerline_symbol : '\uE0B0'
       foreground : '{{ background }}'
-      background : '{{ green }}'
+      background : '{{ brightGreen }}'
       
       background_templates : 
-      - "{% raw %}{{ if or (.Working.Changed) (.Staging.Changed) }}{% endraw %}{{ brightRed }}{% raw %}{{ end }}{% endraw %}"
-      - "{% raw %}{{ if and (gt .Ahead 0) (gt .Behind 0) }}{% endraw %}{{ brightPurple }}{% raw %}{{ end }}{% endraw %}"
+      - "{% raw %}{{ if or (.Working.Changed) (.Staging.Changed) }}{% endraw %}{{ red }}{% raw %}{{ end }}{% endraw %}"
+      - "{% raw %}{{ if and (gt .Ahead 0) (gt .Behind 0) }}{% endraw %}{{ purple }}{% raw %}{{ end }}{% endraw %}"
       - "{% raw %}{{ if gt .Ahead 0 }}{% endraw %}{{ yellow }}{% raw %}{{ end }}{% endraw %}"
-      - "{% raw %}{{ if gt .Behind 0 }}{% endraw %}{{ brightGreen }}{% raw %}{{ end }}{% endraw %}"
+      - "{% raw %}{{ if gt .Behind 0 }}{% endraw %}{{ green }}{% raw %}{{ end }}{% endraw %}"
       
       properties: 
         fetch_status : true
@@ -57,10 +75,11 @@ blocks :
         fetch_upstream_icon : true
         template: {% raw %}"{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"{% endraw %}
       
+
     - type : exit
       style : diamond
       leading_diamond : ""
-      trailing_diamond : "\ue0b4 "
+      trailing_diamond : "\ue0c0 "
       
       foreground : "{{ brightWhite }}"
       foreground_templates :

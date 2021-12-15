@@ -9,3 +9,8 @@ render :
     target_format : json
     template_name : my_template.omp.yaml.j2
     palette_name : my_palette_alt.yaml
+
+  - target_name : my_theme_pastel
+    target_format : json
+    template_name : my_template.omp.yaml.j2
+    palette_name : my_palette_pastel.yaml
